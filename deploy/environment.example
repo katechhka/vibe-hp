@@ -1,0 +1,10 @@
+# Copy to .env.production on the VPS. Never commit the filled file.
+PAYMENT_MODE=demo
+APP_URL=http://127.0.0.1:3000
+SITE_DOMAIN=localhost
+EMAIL_MODE=disabled
+RESEND_API_KEY=
+EMAIL_FROM=
+YOOKASSA_SHOP_ID=
+YOOKASSA_SECRET_KEY=
+ADMIN_PASSWORD_HASH=

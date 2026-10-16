@@ -1,0 +1,32 @@
+{
+  "testedAt": "2026-10-13T11:41:11.818Z",
+  "widths": [
+    360,
+    390,
+    768,
+    1024,
+    1440
+  ],
+  "products": 12,
+  "checks": [
+    "routes",
+    "filters",
+    "search-empty-reset",
+    "sort-query",
+    "carousel",
+    "gallery",
+    "variants",
+    "cart-persistence",
+    "checkout-validation",
+    "draft-persistence",
+    "payment-layouts",
+    "unavailable-product",
+    "mobile-menu-escape-focus",
+    "404",
+    "reduced-motion",
+    "horizontal-overflow"
+  ],
+  "expectedNotFoundMessages": [],
+  "errors": [],
+  "failures": []
+}

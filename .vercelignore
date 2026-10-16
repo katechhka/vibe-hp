@@ -1,0 +1,9 @@
+node_modules
+.next
+.qa
+/data
+.env*
+*.sqlite*
+*.tsbuildinfo
+.git
+docs/screenshots

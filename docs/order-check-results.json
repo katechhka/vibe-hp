@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-16T07:46:41.706Z",
+  "base": "http://127.0.0.1:3002",
+  "checks": [
+    "Main purchase route creates one persisted order; server total 930 ₽ and HttpOnly access cookie",
+    "Parallel repeated requests share order; price, phone and cross-origin tampering rejected",
+    "Foreign browser cannot access order; API status omits contacts",
+    "Failure/cancel preserve draft and cart; retry reuses order with one new attempt; stale attempt rejected",
+    "Confirmed success clears original quantities; later same-product and unrelated additions survive across tabs and repeat visits",
+    "Lost response can be retried without creating another order",
+    "Paid order and protected access survive a full Next.js server restart"
+  ],
+  "errors": []
+}

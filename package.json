@@ -1,0 +1,52 @@
+{
+  "name": "letters-and-stars",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/lib/*.test.ts src/server/*.test.ts",
+    "test:ui": "node scripts/check-ui.mjs",
+    "test:flows": "tsx scripts/check-flows.mjs",
+    "test:orders": "node scripts/run-order-check.mjs",
+    "mail:flush": "tsx scripts/send-receipts.ts",
+    "payments:sync": "tsx scripts/sync-payments.ts",
+    "test:payments": "node scripts/run-payment-check.mjs",
+    "admin:setup": "tsx scripts/setup-admin.ts",
+    "test:admin": "node scripts/check-admin.mjs",
+    "backup": "node scripts/backup.mjs",
+    "test:backup": "node scripts/check-backup.mjs",
+    "supabase:check": "tsx scripts/check-supabase.ts",
+    "supabase:migrate": "tsx scripts/migrate-supabase.ts",
+    "supabase:photos": "tsx scripts/migrate-photos.ts",
+    "supabase:export": "tsx scripts/export-supabase.ts",
+    "supabase:verify": "tsx scripts/verify-supabase.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "better-sqlite3": "^13.0.3",
+    "drizzle-orm": "^0.45.4",
+    "next": "^16.0.0",
+    "pg": "^8.23.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "@playwright/test": "^1.64.0",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.0"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}

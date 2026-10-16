@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-16T07:36:35.117Z",
+  "checks": [
+    "Unauthorized API and page access blocked; login validates password and sets protected session",
+    "Editor updates live storefront price without rebuild; reserve protects stock; old order and repeated request retain snapshot",
+    "Editor returns via button and products tab; slug is generated; minimal product saves with placeholder",
+    "New draft, two optimized uploads, publication, dynamic product URL and purchase work; orders are private",
+    "Admin responsive at 360/768/1440; order detail works; password change revokes session and new login works",
+    "Catalog, uploads, paid stock and changed password survive production restart; env seed does not reset password"
+  ],
+  "errors": []
+}

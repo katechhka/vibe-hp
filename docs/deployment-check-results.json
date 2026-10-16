@@ -1,0 +1,11 @@
+{
+  "testedAt": "2026-10-13T12:19:22.134Z",
+  "checks": [
+    "SQLite live WAL backup restores paid order and passes integrity_check",
+    "Uploaded file survives backup"
+  ],
+  "dockerVerified": false,
+  "limitations": [
+    "Docker unavailable: build/run, Linux dependencies and HTTPS not verified"
+  ]
+}

@@ -1,0 +1,7 @@
+{$SITE_DOMAIN} {
+    encode zstd gzip
+    request_body {
+        max_size 9MB
+    }
+    reverse_proxy shop:3000
+}

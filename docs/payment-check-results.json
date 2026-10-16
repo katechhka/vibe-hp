@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-16T07:43:29.136Z",
+  "mode": "mocked YooKassa API; real provider NOT tested",
+  "checks": [
+    "Production checkout recovers from provider outage using the same protected order",
+    "Provider redirect and forged success never confirm payment; webhook returns no order data",
+    "Confirmed cancellation and failure retry in the same order; demo endpoint blocked and stranger denied",
+    "Verified success survives repeated notifications, clears purchased items, queues email; screenshots at 360/768/1440",
+    "Provider mode, payment ids, paid status and protected access survive production server restart"
+  ],
+  "errors": []
+}

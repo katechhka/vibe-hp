@@ -1,0 +1,40 @@
+{
+  "testedAt": "2026-10-16T07:38:46.008Z",
+  "engine": "local PGlite PostgreSQL; not a live Supabase test",
+  "checks": [
+    "Every imported column equals SQLite snapshot, including orders, contact data, prices and admin password hash",
+    "Private schema denies anonymous and authenticated API access",
+    "Second import rejected atomically"
+  ],
+  "counts": {
+    "schema_versions": 5,
+    "inventory": 13,
+    "orders": 3,
+    "attempts": 3,
+    "request_limits": 1,
+    "mail_outbox": 2,
+    "payment_modes": 1,
+    "provider_payments": 1,
+    "catalog": 13,
+    "inventory_versions": 13,
+    "admin_account": 1
+  },
+  "liveImportVerified": true,
+  "storageVerified": true,
+  "limitations": [
+    "Public real email delivery and terminal cancellation/retry not verified; local isolated automated scenarios passed"
+  ],
+  "liveVerifiedAt": "2026-10-16T11:38:49.910Z",
+  "liveChecks": [
+    "Every imported field matches local snapshot SHA-256; contacts and admin password hash not exposed",
+    "Catalog order preserved",
+    "Schema inaccessible to anonymous/authenticated roles"
+  ],
+  "runtimeCatalogReadVerified": true,
+  "runtimeCatalogReadCount": 13,
+  "vercelProjectCreated": true,
+  "publicDeploymentVerified": true,
+  "publicUrl": "https://letters-and-stars.vercel.app",
+  "livePaymentVerified": true,
+  "automaticWebhookVerified": true
+}

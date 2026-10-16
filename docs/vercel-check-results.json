@@ -1,0 +1,27 @@
+{
+  "testedAt": "2026-10-16T11:58:08.614Z",
+  "base": "https://letters-and-stars.vercel.app",
+  "checks": [
+    "Public pages at 360px",
+    "Public pages at 768px",
+    "Public pages at 1440px",
+    "Checkout validation",
+    "Supabase uploaded photos",
+    "Server validation",
+    "Order access denied",
+    "Actual YooKassa test card decline; provider keeps payment pending for another card",
+    "Actual YooKassa test success confirmed by server API",
+    "Actual order denied from foreign browser",
+    "Repeated webhook verifies provider API and leaves stock unchanged",
+    "Automatic YooKassa success webhook updates PostgreSQL with customer return blocked",
+    "Paid order and 13 catalog products persist after redeployment",
+    "Admin API rejects unauthenticated requests"
+  ],
+  "browserErrors": [],
+  "livePaymentVerified": true,
+  "emailVerified": false,
+  "emailLimitation": "Synthetic recipient example.invalid; actual delivery not tested",
+  "automaticWebhookConfigured": true,
+  "automaticWebhookVerified": true,
+  "redeployPersistenceVerified": true
+}

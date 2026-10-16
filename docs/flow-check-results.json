@@ -1,0 +1,42 @@
+{
+  "testedAt": "2026-10-13T11:36:56.937Z",
+  "results": [
+    {
+      "name": "Stored duplicates and shared variant stock are repaired",
+      "passed": true
+    },
+    {
+      "name": "Corrupt cart has an informative recoverable empty state",
+      "passed": true
+    },
+    {
+      "name": "Twenty immediate clicks cannot exceed stock",
+      "passed": true
+    },
+    {
+      "name": "Changing stock clamps selected quantity; variants share remaining stock",
+      "passed": true
+    },
+    {
+      "name": "Cart updates across tabs and survives reload",
+      "passed": true
+    },
+    {
+      "name": "Catalogue direct URLs, back/forward and malformed filters",
+      "passed": true
+    },
+    {
+      "name": "Independent delivery addresses, invalid phone and draft restoration",
+      "passed": true
+    },
+    {
+      "name": "Disabled browser storage is explained instead of silently losing cart",
+      "passed": true
+    },
+    {
+      "name": "Gallery supports keyboard and ignores vertical scrolling gestures",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

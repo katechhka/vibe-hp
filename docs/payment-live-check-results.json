@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-13T08:11:40.595Z",
+  "mode": "real YooKassa TEST shop",
+  "checks": [
+    "Authenticated API accepted test credentials",
+    "Persisted orders created hosted test payments for 640 RUB",
+    "Official Visa test card succeeded; protected return page and API confirmed paid",
+    "Official insufficient_funds card showed refusal; API honestly remained pending while YooKassa allowed another card",
+    "Leaving payment page did not falsely cancel or mark order paid",
+    "Retry with successful test card used same order and same provider attempt; API confirmed paid"
+  ],
+  "email": "disabled in QA; Resend previously verified by user",
+  "webhookDelivery": "not tested: public HTTPS address not configured",
+  "realCharges": false
+}

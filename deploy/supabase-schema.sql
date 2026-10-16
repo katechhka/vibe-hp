@@ -1,0 +1,22 @@
+-- Private server-only schema. No tables are exposed through the public Data API.
+CREATE SCHEMA IF NOT EXISTS shop;
+REVOKE ALL ON SCHEMA shop FROM PUBLIC, anon, authenticated;
+CREATE TABLE IF NOT EXISTS shop.schema_versions(version INTEGER PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS shop.inventory(id TEXT PRIMARY KEY,remaining INTEGER NOT NULL CHECK(remaining>=0));
+CREATE TABLE IF NOT EXISTS shop.orders(id TEXT PRIMARY KEY,number TEXT NOT NULL,owner TEXT NOT NULL,request_key TEXT NOT NULL UNIQUE,fingerprint TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN ('pending','paid','failed','canceled','expired')),items TEXT NOT NULL,customer TEXT NOT NULL,subtotal BIGINT NOT NULL,shipping BIGINT NOT NULL,total BIGINT NOT NULL,delivery_label TEXT NOT NULL,created_at BIGINT NOT NULL,reserved_until BIGINT NOT NULL,active_attempt TEXT);
+CREATE UNIQUE INDEX IF NOT EXISTS orders_request ON shop.orders(owner,request_key);
+CREATE INDEX IF NOT EXISTS orders_reservations ON shop.orders(status,reserved_until);
+CREATE TABLE IF NOT EXISTS shop.attempts(id TEXT PRIMARY KEY,order_id TEXT NOT NULL REFERENCES shop.orders(id),request_key TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN ('pending','succeeded','failed','canceled')),created_at BIGINT NOT NULL,finished_at BIGINT);
+CREATE UNIQUE INDEX IF NOT EXISTS attempts_request ON shop.attempts(order_id,request_key);
+CREATE TABLE IF NOT EXISTS shop.request_limits(owner TEXT PRIMARY KEY,window_start BIGINT NOT NULL,count INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS shop.mail_outbox(order_id TEXT PRIMARY KEY REFERENCES shop.orders(id),status TEXT NOT NULL CHECK(status IN ('pending','sending','sent','failed','review')),payload TEXT NOT NULL,sender TEXT,attempts INTEGER NOT NULL DEFAULT 0,first_attempt BIGINT,lease_until BIGINT NOT NULL DEFAULT 0,next_attempt BIGINT NOT NULL DEFAULT 0,provider_id TEXT,last_error TEXT);
+CREATE TABLE IF NOT EXISTS shop.payment_modes(order_id TEXT PRIMARY KEY REFERENCES shop.orders(id),mode TEXT NOT NULL CHECK(mode='yookassa_test'));
+CREATE TABLE IF NOT EXISTS shop.provider_payments(attempt_id TEXT PRIMARY KEY REFERENCES shop.attempts(id),order_id TEXT NOT NULL REFERENCES shop.orders(id),request TEXT NOT NULL,first_request BIGINT NOT NULL,provider_id TEXT UNIQUE,confirmation_url TEXT,checked_at BIGINT NOT NULL DEFAULT 0,error TEXT);
+CREATE TABLE IF NOT EXISTS shop.catalog(id TEXT PRIMARY KEY,slug TEXT NOT NULL UNIQUE,data TEXT NOT NULL,visible INTEGER NOT NULL DEFAULT 1 CHECK(visible IN (0,1)),revision INTEGER NOT NULL DEFAULT 1,position BIGSERIAL UNIQUE);
+CREATE TABLE IF NOT EXISTS shop.inventory_versions(id TEXT PRIMARY KEY REFERENCES shop.inventory(id),version INTEGER NOT NULL DEFAULT 1);
+CREATE TABLE IF NOT EXISTS shop.admin_account(id INTEGER PRIMARY KEY CHECK(id=1),password_hash TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS shop.admin_sessions(token_hash TEXT PRIMARY KEY,expires BIGINT NOT NULL);
+CREATE TABLE IF NOT EXISTS shop.admin_login_limit(id INTEGER PRIMARY KEY,window_start BIGINT NOT NULL,count INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS shop.import_history(id TEXT PRIMARY KEY,created_at BIGINT NOT NULL,counts TEXT NOT NULL);
+REVOKE ALL ON ALL TABLES IN SCHEMA shop FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON ALL SEQUENCES IN SCHEMA shop FROM PUBLIC, anon, authenticated;
