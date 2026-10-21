@@ -1,3 +1,4 @@
+import { CookieNotice } from '@/components/cookie-notice';
 import type { Metadata } from 'next';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
@@ -49,6 +50,7 @@ export default async function RootLayout({
             <Header />
             <main id="main">{children}</main>
             <Footer />
+            <CookieNotice />
           </ShopProvider>
         </CatalogProvider>
       </body>

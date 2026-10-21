@@ -1,4 +1,5 @@
 'use client';
+import { PrivacyConsent } from './privacy-consent';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -316,35 +317,35 @@ export function Checkout() {
           </label>
         </section>
         <div className="consents">
-          <label>
-            <input
-              disabled={busy}
-              type="checkbox"
-              checked={fields.consent}
-              onChange={(e) => field('consent', e.target.checked)}
-              aria-invalid={!!errors.consent}
-            />
-            <span>
-              Согласен с обработкой данных заказа и отправкой письма с его
-              составом на указанную почту.{' '}
-              <Link href="/privacy">Как они хранятся</Link>
-              {errors.consent && (
-                <small className="field-error">{errors.consent}</small>
-              )}
-            </span>
-          </label>
+          <PrivacyConsent
+            id="checkout-privacy"
+            checked={fields.consent}
+            onChange={(v) => field('consent', v)}
+            disabled={busy}
+            error={errors.consent}
+          />
           <label>
             <input
               type="checkbox"
               disabled={busy}
+              required
               checked={fields.demo}
               onChange={(e) => field('demo', e.target.checked)}
               aria-invalid={!!errors.demo}
+              aria-describedby={
+                errors.demo ? 'checkout-offer-error' : undefined
+              }
             />
             <span>
-              Понимаю, что это демоверсия: настоящей покупки и доставки нет.
+              Принимаю{' '}
+              <Link href="/offer" target="_blank" rel="noopener noreferrer">
+                условия оферты тестовой оплаты
+              </Link>{' '}
+              и понимаю, что настоящей покупки и доставки нет.
               {errors.demo && (
-                <small className="field-error">{errors.demo}</small>
+                <small id="checkout-offer-error" className="field-error">
+                  {errors.demo}
+                </small>
               )}
             </span>
           </label>
@@ -402,7 +403,9 @@ export function Checkout() {
         </div>
         <div className="summary-total">
           <span>Итого</span>
-          <strong>{money(checkoutTotal(items, fields.delivery, products) / 100)}</strong>
+          <strong>
+            {money(checkoutTotal(items, fields.delivery, products) / 100)}
+          </strong>
         </div>
         <div className="payment-disclosure">
           <Icon name="star" size={20} />

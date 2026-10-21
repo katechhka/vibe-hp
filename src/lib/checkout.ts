@@ -70,8 +70,10 @@ export function validateCheckout(f: CheckoutFields): CheckoutErrors {
     if (f[key].length > fieldLimits[key]) e[key] = 'Слишком длинное значение.';
   if (!deliveryOptions.some((o) => o.id === f.delivery))
     e.delivery = 'Выберите способ доставки.';
-  if (!f.consent) e.consent = 'Подтвердите согласие.';
-  if (!f.demo) e.demo = 'Подтвердите, что это демонстрация.';
+  if (!f.consent) e.consent = 'Нужно отдельное согласие на обработку данных.';
+  if (!f.demo)
+    e.demo =
+      'Примите условия тестовой оплаты и подтвердите демонстрационный характер заказа.';
   return e;
 }
 export function checkoutTotal(

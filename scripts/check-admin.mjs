@@ -90,7 +90,12 @@ const body = (price = 290, id = 'ps-001') => ({
   expectedTotal: Math.round(price * 100) + 35000,
 });
 async function post(context, path, data) {
-  return context.request.post(base + path, { headers: { Origin: base }, data });
+  return context.request.post(base + path, {
+    headers: { Origin: base },
+    data: path.startsWith('/api/admin/')
+      ? { ...data, privacyConsent: true }
+      : data,
+  });
 }
 try {
   try {
@@ -119,14 +124,28 @@ try {
   for (const endpoint of ['/api/admin/products', '/api/admin/orders'])
     if ((await buyer.request.get(base + endpoint)).status() !== 401)
       throw Error('Unauthorized API access');
+  const missingConsent = await buyer.request.post(base + '/api/admin/login', {
+    headers: { Origin: base },
+    data: { password },
+  });
+  if (missingConsent.status() !== 400)
+    throw Error('Login allowed without privacy consent');
+  checks.push('Login rejects missing privacy consent before authentication');
   const oldRequest = body(),
     old = (await (await post(buyer, '/api/orders', oldRequest)).json()).order;
   await page.goto(base + '/admin');
+  const cookieNotice = page.locator('.cookie-notice');
+  if (await cookieNotice.isVisible())
+    await cookieNotice
+      .getByRole('button', { name: 'Понятно', exact: true })
+      .click();
   await page.waitForURL('**/admin/login');
   await page.getByLabel('Пароль', { exact: true }).fill('wrong-password');
+  await page.locator('#login-privacy').check();
   await page.getByRole('button', { name: 'Войти', exact: true }).click();
   await expect(page.locator('p[role=alert]')).toHaveText('Неверный пароль.');
   await page.getByLabel('Пароль', { exact: true }).fill(password);
+  await page.locator('#login-privacy').check();
   await page.getByRole('button', { name: 'Войти', exact: true }).click();
   await page.waitForURL('**/admin');
   await expect(page.locator('.admin-product')).toHaveCount(12);
@@ -147,15 +166,26 @@ try {
     ).status() !== 403
   )
     throw Error('CSRF not blocked');
+  for (const action of ['save', 'password']) {
+    const missing = await admin.request.post(base + '/api/admin/' + action, {
+      headers: { Origin: base },
+      data: {},
+    });
+    if (missing.status() !== 400)
+      throw Error('Admin form allowed without consent: ' + action);
+  }
+  checks.push('Save and password endpoints reject missing privacy consent');
   const product = page
     .locator('.admin-product')
     .filter({ hasText: 'Письмо из замка' });
   await product.getByRole('button', { name: 'Изменить' }).click();
   await page.getByLabel('Физический остаток, шт.').fill('0');
+  await page.locator('#editor-privacy').check();
   await page.getByRole('button', { name: 'Сохранить товар' }).click();
   await expect(page.locator('p[role=alert]')).toContainText('меньше резерва');
   await page.getByLabel('Физический остаток, шт.').fill('12');
   await page.getByLabel('Цена, ₽').fill('375.50');
+  await page.locator('#editor-privacy').check();
   await page.getByRole('button', { name: 'Сохранить товар' }).click();
   await expect(page.getByRole('status')).toContainText('Товар сохранён.');
   const original = (
@@ -167,7 +197,9 @@ try {
   if (repeated.id !== old.id) throw Error('Idempotence lost');
   const storefront = await buyer.newPage();
   await storefront.goto(base + '/products/letter');
-  await expect(storefront.locator('.product-info .product-price')).toContainText('375,5');
+  await expect(
+    storefront.locator('.product-info .product-price')
+  ).toContainText('375,5');
   checks.push(
     'Editor updates live storefront price without rebuild; reserve protects stock; old order and repeated request retain snapshot'
   );
@@ -194,28 +226,61 @@ try {
     'Описание изображений для незрячих': 'Авторская открытка на светлом фоне',
   }))
     await page.getByLabel(label, { exact: true }).fill(value);
-  await expect(page.locator('.admin-editor input[readonly]')).toHaveValue('novaya-otkrytka');
-  await expect(page.locator('.admin-editor [required]')).toHaveCount(3);
+  await expect(page.locator('.admin-editor input[readonly]')).toHaveValue(
+    'novaya-otkrytka'
+  );
+  await expect(
+    page.locator(
+      '.admin-editor input[required]:not([type=checkbox]), .admin-editor textarea[required]'
+    )
+  ).toHaveCount(3);
   await page.locator('.admin-editor > button[type=button]').click();
   await expect(page.locator('.admin-list')).toBeVisible();
   await page.locator('.admin-product button').first().click();
   await page.locator('.admin-tabs button').first().click();
   await expect(page.locator('.admin-list')).toBeVisible();
   await page.locator('.admin-toolbar .button').click();
-  await page.locator('.admin-editor [required]').nth(0).fill('Новая открытка');
-  await page.locator('.admin-editor [required]').nth(1).fill('490');
-  await page.locator('.admin-editor [required]').nth(2).fill('Handmade gift');
+  await page
+    .locator(
+      '.admin-editor input[required]:not([type=checkbox]), .admin-editor textarea[required]'
+    )
+    .nth(0)
+    .fill('Новая открытка');
+  await page
+    .locator(
+      '.admin-editor input[required]:not([type=checkbox]), .admin-editor textarea[required]'
+    )
+    .nth(1)
+    .fill('490');
+  await page
+    .locator(
+      '.admin-editor input[required]:not([type=checkbox]), .admin-editor textarea[required]'
+    )
+    .nth(2)
+    .fill('Handmade gift');
   await page.locator('.admin-editor input[type=number]').nth(1).fill('3');
-  await page.locator('.admin-editor > button[type=submit], .admin-editor > button:not([type])').click();
+  await page.locator('#editor-privacy').check();
+  await page
+    .locator(
+      '.admin-editor > button[type=submit], .admin-editor > button:not([type])'
+    )
+    .click();
   await expect(page.locator('.admin-image-grid>div')).toHaveCount(1);
-  checks.push('Editor returns via button and products tab; slug is generated; minimal product saves with placeholder');
+  checks.push(
+    'Editor returns via button and products tab; slug is generated; minimal product saves with placeholder'
+  );
   const file = page.getByLabel(/Загрузить JPEG/);
+  await page.locator('#editor-privacy').check();
   await file.setInputFiles('public/images/letter.webp');
-  await expect(page.locator('.admin-image-grid img').first()).toHaveAttribute('src', /media/);
+  await expect(page.locator('.admin-image-grid img').first()).toHaveAttribute(
+    'src',
+    /media/
+  );
   await expect(file).toBeEnabled();
   await expect(page.locator('.admin-image-grid>div')).toHaveCount(1);
   await file.setInputFiles('public/images/letter-detail.webp');
   await expect(page.locator('.admin-image-grid>div')).toHaveCount(2);
+  await page.locator('#editor-privacy').check();
   await page.getByRole('button', { name: 'Сохранить товар' }).click();
   await expect(page.getByRole('status')).toContainText('Товар сохранён.');
   if (
@@ -225,6 +290,7 @@ try {
   )
     throw Error('Draft visible publicly');
   await page.getByLabel('Показывать в магазине').check();
+  await page.locator('#editor-privacy').check();
   await page.getByRole('button', { name: 'Сохранить товар' }).click();
   await expect(page.getByRole('status')).toContainText('Товар сохранён.');
   await storefront.goto(base + '/products/novaya-otkrytka');
@@ -297,6 +363,7 @@ try {
     fullPage: true,
   });
   await page.getByRole('tab', { name: 'Доступ', exact: true }).click();
+  await page.locator('#password-privacy').check();
   await page.getByLabel('Текущий пароль').fill(password);
   await page
     .getByLabel('Новый пароль — минимум 12 символов')
@@ -310,6 +377,7 @@ try {
   await page
     .getByLabel('Пароль', { exact: true })
     .fill('new-test-admin-password');
+  await page.locator('#login-privacy').check();
   await page.getByRole('button', { name: 'Войти', exact: true }).click();
   await page.waitForURL('**/admin');
   checks.push(

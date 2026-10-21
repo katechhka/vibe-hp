@@ -1,7 +1,9 @@
 {
-  "date": "2026-10-16T07:36:35.117Z",
+  "date": "2026-10-21T08:14:52.771Z",
   "checks": [
+    "Login rejects missing privacy consent before authentication",
     "Unauthorized API and page access blocked; login validates password and sets protected session",
+    "Save and password endpoints reject missing privacy consent",
     "Editor updates live storefront price without rebuild; reserve protects stock; old order and repeated request retain snapshot",
     "Editor returns via button and products tab; slug is generated; minimal product saves with placeholder",
     "New draft, two optimized uploads, publication, dynamic product URL and purchase work; orders are private",

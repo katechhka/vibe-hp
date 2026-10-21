@@ -238,7 +238,7 @@ try {
         .click();
       assert.match(
         await p.locator('.consents').innerText(),
-        /Подтвердите, что это демонстрация/
+        /Примите условия тестовой оплаты/
       );
       await p.getByRole('button', { name: 'Очистить черновик' }).click();
       await p.reload({ waitUntil: 'networkidle' });

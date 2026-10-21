@@ -3038,3 +3038,230 @@ input[type='checkbox'] {
 .admin-login .plain-button {
   cursor: pointer;
 }
+
+/* Legal documents and technical cookie notice share the workshop palette. */
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+.footer-legal a,
+.footer-legal button {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.footer-legal button {
+  padding: 0;
+  font-size: inherit;
+  background: transparent;
+}
+.legal-heading {
+  max-width: 900px;
+  margin-bottom: 64px;
+}
+.legal-heading .eyebrow {
+  margin: 32px 0 20px;
+  color: var(--wine);
+}
+.legal-heading h1 {
+  font-size: clamp(34px, 4.1vw, 60px);
+  overflow-wrap: anywhere;
+}
+.legal-intro {
+  margin-top: 24px;
+  max-width: 680px;
+  color: var(--muted);
+  font-size: 17px;
+}
+.legal-demo-note {
+  margin-top: 28px;
+  padding: 20px 24px;
+  border-left: 2px solid var(--wine);
+  background: var(--linen);
+  font-size: 13px;
+}
+.legal-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 760px);
+  gap: 64px;
+  align-items: start;
+}
+.legal-toc {
+  position: sticky;
+  top: 32px;
+  display: grid;
+  gap: 14px;
+  font-size: 13px;
+}
+.legal-toc .eyebrow {
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.legal-toc a:hover,
+.legal-related a:hover {
+  color: var(--wine);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.legal-body section {
+  margin-bottom: 48px;
+  scroll-margin-top: 32px;
+}
+.legal-body h2 {
+  font-size: clamp(25px, 2.3vw, 34px);
+  letter-spacing: -0.035em;
+  margin-bottom: 22px;
+}
+.legal-body p + p {
+  margin-top: 18px;
+}
+.legal-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 28px;
+  font-size: 13px;
+}
+.privacy-consent {
+  margin: 20px 0;
+  font-size: 13px;
+}
+.privacy-consent label {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+.privacy-consent input {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  margin: 3px 0 0;
+  accent-color: var(--wine);
+}
+.privacy-consent a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.privacy-consent .field-error {
+  margin-top: 8px;
+}
+html {
+  scroll-padding-bottom: var(--cookie-notice-space, 24px);
+}
+body {
+  padding-bottom: var(--cookie-notice-space, 0px);
+}
+.cookie-notice {
+  position: fixed;
+  z-index: 40;
+  bottom: 24px;
+  left: 24px;
+  width: min(780px, calc(100% - 48px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--wine);
+  box-shadow: 0 8px 32px #29252212;
+}
+.cookie-star {
+  color: var(--wine);
+  font-size: 32px;
+}
+.cookie-notice h2 {
+  font-size: 21px;
+  letter-spacing: -0.035em;
+  margin: 0 0 10px;
+}
+.cookie-notice p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.cookie-notice a {
+  color: var(--wine);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.cookie-notice .button {
+  min-height: 44px;
+  padding: 12px 22px;
+  white-space: nowrap;
+}
+@media (max-width: 800px) {
+  .legal-layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .legal-toc {
+    position: static;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 28px;
+  }
+  .legal-heading {
+    margin-bottom: 36px;
+  }
+}
+@media (max-width: 540px) {
+  .cookie-notice {
+    bottom: 12px;
+    left: 12px;
+    width: calc(100% - 24px);
+    padding: 20px;
+    gap: 14px;
+    grid-template-columns: 1fr;
+  }
+  .cookie-star {
+    display: none;
+  }
+  .cookie-notice h2 {
+    font-size: 20px;
+  }
+  .cookie-notice .button {
+    justify-content: center;
+    width: 100%;
+  }
+  .footer-legal {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .legal-demo-note {
+    padding: 16px;
+  }
+}
+@media print {
+  .site-header,
+  .site-footer,
+  .cookie-notice,
+  .skip-link,
+  .legal-toc,
+  .legal-related {
+    display: none !important;
+  }
+  body {
+    padding: 0;
+    background: white;
+    color: black;
+  }
+  .legal-document {
+    width: 100%;
+  }
+  .legal-layout {
+    display: block;
+  }
+  .legal-body section {
+    break-inside: avoid;
+  }
+}

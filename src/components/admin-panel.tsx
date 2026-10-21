@@ -1,4 +1,5 @@
 'use client';
+import { PrivacyConsent } from './privacy-consent';
 import { productSlug } from '@/lib/product-slug';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -52,6 +53,7 @@ async function api(action: string, value?: unknown) {
 export function AdminLogin() {
   const router = useRouter(),
     guard = useRef(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
   const [password, setPassword] = useState(''),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
@@ -61,14 +63,19 @@ export function AdminLogin() {
       <h1>Войти в мастерскую</h1>
       <p>Один закрытый аккаунт — admin. Здесь живут товары и заказы.</p>
       <form
+        noValidate
         onSubmit={async (e) => {
           e.preventDefault();
           if (guard.current) return;
+          if (!privacyConsent) {
+            setError('Подтвердите согласие на обработку данных.');
+            return;
+          }
           guard.current = true;
           setBusy(true);
           setError('');
           try {
-            await api('login', { password });
+            await api('login', { password, privacyConsent });
             router.replace('/admin');
             router.refresh();
           } catch (e) {
@@ -91,6 +98,15 @@ export function AdminLogin() {
             disabled={busy}
           />
         </label>
+        <PrivacyConsent
+          id="login-privacy"
+          error={
+            !privacyConsent && error.includes('согласие') ? error : undefined
+          }
+          checked={privacyConsent}
+          onChange={setPrivacyConsent}
+          disabled={busy}
+        />
         {error && (
           <p role="alert" className="field-error">
             {error}
@@ -136,6 +152,8 @@ export function AdminPanel() {
       (Partial<AdminProduct> & ReturnType<typeof blank>) | null
     >(null),
     [variants, setVariants] = useState('');
+  const [editorConsent, setEditorConsent] = useState(false),
+    [passwordConsent, setPasswordConsent] = useState(false);
   const [busy, setBusy] = useState(false),
     [loading, setLoading] = useState(true),
     [error, setError] = useState(''),
@@ -175,6 +193,7 @@ export function AdminPanel() {
     }
   }
   function open(p?: AdminProduct) {
+    setEditorConsent(false);
     setDraft(
       p
         ? {
@@ -316,12 +335,16 @@ export function AdminPanel() {
           </div>
           {draft ? (
             <form
+              noValidate
               className="admin-editor"
               onSubmit={(e) => {
                 e.preventDefault();
                 run(async () => {
+                  if (!editorConsent)
+                    throw Error('Подтвердите согласие на обработку данных.');
                   const result = await api('save', {
                     ...draft,
+                    privacyConsent: editorConsent,
                     variants: variants
                       .split('\n')
                       .map((s) => s.trim())
@@ -336,6 +359,17 @@ export function AdminPanel() {
                 });
               }}
             >
+              <PrivacyConsent
+                id="editor-privacy"
+                error={
+                  !editorConsent && error.includes('согласие')
+                    ? error
+                    : undefined
+                }
+                checked={editorConsent}
+                onChange={setEditorConsent}
+                disabled={busy}
+              />
               <div className="admin-editor-heading">
                 <h2>{draft.id ? 'Редактировать товар' : 'Новая вещь'}</h2>
                 <button
@@ -467,13 +501,22 @@ export function AdminPanel() {
                       const file = e.target.files?.[0];
                       e.target.value = '';
                       if (!file) return;
+                      if (!editorConsent) {
+                        setError(
+                          'Перед загрузкой подтвердите согласие на обработку данных.'
+                        );
+                        return;
+                      }
                       run(async () => {
                         if (file.size > 4_000_000)
                           throw Error('Максимальный размер — 4 МБ.');
                         const response = await fetch('/api/admin/upload', {
                           method: 'POST',
                           body: file,
-                          headers: { 'Content-Type': file.type },
+                          headers: {
+                            'Content-Type': file.type,
+                            'X-Privacy-Consent': 'true',
+                          },
                         });
                         const result = await response.json();
                         if (!response.ok) throw Error(result.error);
@@ -648,10 +691,17 @@ export function AdminPanel() {
           <h2>Сменить пароль</h2>
           <p>После смены все сеансы завершатся. Войдите с новым паролем.</p>
           <form
+            noValidate
             onSubmit={(e) => {
               e.preventDefault();
               run(async () => {
-                await api('password', { current, next });
+                if (!passwordConsent)
+                  throw Error('Подтвердите согласие на обработку данных.');
+                await api('password', {
+                  current,
+                  next,
+                  privacyConsent: passwordConsent,
+                });
                 router.replace('/admin/login');
                 router.refresh();
               });
@@ -682,6 +732,17 @@ export function AdminPanel() {
                 onChange={(e) => setNext(e.target.value)}
               />
             </label>
+            <PrivacyConsent
+              id="password-privacy"
+              error={
+                !passwordConsent && error.includes('согласие')
+                  ? error
+                  : undefined
+              }
+              checked={passwordConsent}
+              onChange={setPasswordConsent}
+              disabled={busy}
+            />
             <button className="button" disabled={busy}>
               {busy ? 'Обновляем…' : 'Сменить пароль'}
             </button>

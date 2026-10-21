@@ -67,6 +67,8 @@ export async function POST(
       store = getStore();
     if (action === 'login') {
       const value = await body(request);
+      if (value.privacyConsent !== true)
+        throw new ShopError(400, 'Подтвердите согласие на обработку данных.');
       const token =
         store instanceof PgShopStore
           ? await store.login(value.password)
@@ -77,6 +79,8 @@ export async function POST(
     }
     await requireAdmin();
     if (action === 'upload') {
+      if (request.headers.get('x-privacy-consent') !== 'true')
+        throw new ShopError(400, 'Подтвердите согласие на обработку данных.');
       const origin = new URL(process.env.APP_URL || 'http://127.0.0.1:3000')
         .origin;
       if (request.headers.get('origin') !== origin)
@@ -107,6 +111,8 @@ export async function POST(
       return { ok: true };
     }
     if (action === 'password') {
+      if (value.privacyConsent !== true)
+        throw new ShopError(400, 'Подтвердите согласие на обработку данных.');
       if (store instanceof PgShopStore)
         await store.changePassword(value.current, value.next);
       else changePassword(store.native, value.current, value.next);
@@ -114,6 +120,8 @@ export async function POST(
       return { ok: true };
     }
     if (action === 'save') {
+      if (value.privacyConsent !== true)
+        throw new ShopError(400, 'Подтвердите согласие на обработку данных.');
       if (
         !Array.isArray(value.gallery) ||
         !(

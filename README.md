@@ -66,6 +66,8 @@ npm run build
 
 ## Документация
 
+- [Документы демоверсии, cookie и обязательные согласия](docs/legal.md). Политика, отдельное согласие, условия тестовой оплаты и описание cookie доступны в подвале сайта.
+
 - [Переменные окружения](.env.example), [Supabase и Vercel](docs/supabase.md), [повторная публикация](docs/publication.md).
 - [Тестовая ЮKassa](docs/payments.md), [письма](docs/email.md), [админка](docs/admin.md).
 - [Альтернативный запуск на VPS](docs/deployment.md). Docker локально не проверялся.

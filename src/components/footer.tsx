@@ -1,3 +1,4 @@
+import { CookieNoticeButton } from './cookie-notice';
 import Link from 'next/link';
 import { Brand } from './header';
 export function Footer() {
@@ -29,6 +30,13 @@ export function Footer() {
             </span>
           </div>
         </div>
+        <nav className="footer-legal" aria-label="Документы мастерской">
+          <Link href="/privacy">Политика обработки данных</Link>
+          <Link href="/consent">Согласие на обработку</Link>
+          <Link href="/offer">Оферта тестовой оплаты</Link>
+          <Link href="/cookies">Cookie и данные браузера</Link>
+          <CookieNoticeButton />
+        </nav>
         <div className="footer-bottom">
           <span>© 2026 Письма и звёзды</span>
           <p>
